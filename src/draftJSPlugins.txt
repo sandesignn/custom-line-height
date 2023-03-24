@@ -1,0 +1,83 @@
+import { stateToHTML } from "draft-js-export-html";
+import { stateFromHTML } from "draft-js-import-html";
+
+const contentState = stateFromHTML(propsValue, HTMLToDraftStyle);
+const defaultState = EditorState.createWithContent(contentState);
+
+const contentAsHTML = stateToHTML(editorContent, draftToHTMLStyle);
+console.log("contentAsHTML", contentAsHTML);
+  
+  
+  const draftToHTMLStyle = {
+  inlineStyles: {
+    // Use a custom inline style. Default element is `span`.
+    LINE100: { style: { lineHeight: "100%" } },
+    LINE110: { style: { lineHeight: "110%" } },
+    LINE130: { style: { lineHeight: "130%" } },
+    LINE150: { style: { lineHeight: "150%" } },
+    LINE200: { style: { lineHeight: "200%" } },
+    LINE300: { style: { lineHeight: "300%" } },
+    LS0: { style: { letterSpacing: "0px" } },
+    LS1: { style: { letterSpacing: "1px" } },
+    LS2: { style: { letterSpacing: "2px" } },
+    LS3: { style: { letterSpacing: "3px" } },
+    LS4: { style: { letterSpacing: "4px" } },
+    LS5: { style: { letterSpacing: "5px" } },
+    LS6: { style: { letterSpacing: "6px" } },
+    LS7: { style: { letterSpacing: "7px" } },
+    LS8: { style: { letterSpacing: "8px" } },
+    LS9: { style: { letterSpacing: "9px" } },
+    LS10: { style: { letterSpacing: "10px" } },
+    LS15: { style: { letterSpacing: "15px" } },
+    LS20: { style: { letterSpacing: "20px" } }
+  },
+  inlineStyleFn: (styles) => {
+    // console.log('draftToHTMLStyle', styles);
+    let key = "color-";
+    let key1 = "bgcolor-";
+    let color = styles.filter((value) => value.startsWith(key)).first();
+    let bgcolor = styles.filter((value) => value.startsWith(key1)).first();
+
+    if (color) {
+      return {
+        element: "span",
+        style: {
+          color: color.replace(key, "")
+        }
+      };
+    }
+    if (bgcolor) {
+      return {
+        element: "span",
+        style: {
+          backgroundColor: bgcolor.replace(key1, "")
+        }
+      };
+    }
+  }
+};
+
+const HTMLToDraftStyle = {
+  customInlineFn: (element, { Style, Entity }) => {
+    if (element.style.color) {
+      console.log("color", Style("color-" + element.style.color));
+      return Style("color-" + element.style.color); // this one
+    }
+    if (element.style.fontSize) {
+      console.log(Style("font-size-" + element.style.fontSize));
+      return Style("font-size-" + element.style.fontSize); // or this one
+    }
+    if (element.style.backgroundColor) {
+      console.log(Style("background-color-" + element.style.backgroundColor));
+      return Style("background-color-" + element.style.backgroundColor);
+    }
+    if (element.style.lineHeight) {
+      console.log(Style("line-height-" + element.style.lineHeight));
+      return Style("line-height-" + element.style.lineHeight);
+    }
+    if (element.style.letterSpacing) {
+      console.log(Style("letter-spacing-" + element.style.letterSpacing));
+      return Style("letter-spacing-" + element.style.letterSpacing);
+    }
+  }
+};
